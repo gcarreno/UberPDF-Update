@@ -22,7 +22,7 @@ type
     btnClearLogs: TButton;
     cbAutoClear: TCheckBox;
     edtStatus: TEdit;
-    edtPath: TEdit;
+    edtInstallPath: TEdit;
     lblPathTitle: TLabel;
     memError: TMemo;
     mnuHelpAbout: TMenuItem;
@@ -46,10 +46,15 @@ type
     procedure actFileUpdateExecute(Sender: TObject);
     procedure actHelpAboutExecute(Sender: TObject);
     procedure actLoggingClearLogsExecute(Sender: TObject);
+    procedure edtInstallPathChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var CloseAction: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: boolean);
     procedure FormCreate(Sender: TObject);
+    procedure psMainRestoreProperties(Sender: TObject);
   private
+    FRestoredOnce: Boolean;
+    FInstallPath: String;
+
     procedure InitPropStorage;
     procedure InitTitle;
     procedure InitShortCuts;
@@ -82,14 +87,41 @@ end;
 
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
+  FRestoredOnce := False;
   InitPropStorage;
   InitTitle;
   InitShortCuts;
 end;
 
+procedure TfrmMain.psMainRestoreProperties(Sender: TObject);
+begin
+  if Length(edtInstallPath.Text) = 0 then
+  begin
+{$IFDEF LINUX}
+    edtInstallPath.Text := GetEnvironmentVariable('HOME') + '/UberPDF';
+{$ENDIF}
+{$IFDEF WINDOWS}
+    edtInstallPath.Text := GetEnvironmentVariable('HOMEPATH') + '\UberPDF';
+{$ENDIF}
+  end;
+  if not FRestoredOnce then
+  begin
+    FRestoredOnce := True;
+    // TODO: Checks and stuff
+  end;
+end;
+
 procedure TfrmMain.actFileUpdateExecute(Sender: TObject);
 begin
-  //
+  Log('Intsall Path: '+FInstallPath);
+{$IFDEF LINUX}
+  Log('HOME: '+GetEnvironmentVariable('HOME'));
+  Log('PATH: '+GetEnvironmentVariable('PATH'));
+{$ENDIF}
+{$IFDEF WINDOWS}
+  Log('HOMEPATH: '+GetEnvironmentVariable('HOMEPATH'));
+  Log('PATH: '+GetEnvironmentVariable('PATH'));
+{$ENDIF}
 end;
 
 procedure TfrmMain.actHelpAboutExecute(Sender: TObject);
@@ -101,6 +133,11 @@ procedure TfrmMain.actLoggingClearLogsExecute(Sender: TObject);
 begin
   memError.Clear;
   synLog.Clear;
+end;
+
+procedure TfrmMain.edtInstallPathChange(Sender: TObject);
+begin
+  FInstallPath := edtInstallPath.Text;
 end;
 
 procedure TfrmMain.FormClose(Sender: TObject; var CloseAction: TCloseAction);
@@ -143,7 +180,8 @@ end;
 
 procedure TfrmMain.Output(AMsg: String);
 begin
-  //
+  synLog.Lines.Add(AMsg);
+  Application.ProcessMessages;
 end;
 
 procedure TfrmMain.Log(AMsg: String);

@@ -11,7 +11,7 @@ object frmMain: TfrmMain
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   Position = poDefault
-  SessionProperties = 'cbAutoClear.Checked;edtPath.Text;Height;Left;psLogs.Position;Top;Width;WindowState'
+  SessionProperties = 'cbAutoClear.Checked;Height;Left;psLogs.Position;Top;Width;WindowState;edtInstallPath.Text'
   object panControls: TPanel
     Left = 0
     Height = 464
@@ -27,10 +27,10 @@ object frmMain: TfrmMain
       Top = 8
       Width = 110
       Caption = 'Installation P&ath'
-      FocusControl = edtPath
+      FocusControl = edtInstallPath
       ParentColor = False
     end
-    object edtPath: TEdit
+    object edtInstallPath: TEdit
       Left = 8
       Height = 29
       Hint = 'Directory to install UberPDF SDK'
@@ -38,26 +38,29 @@ object frmMain: TfrmMain
       Width = 216
       Anchors = [akTop, akLeft, akRight]
       AutoSize = False
+      OnChange = edtInstallPathChange
       ParentShowHint = False
       ShowHint = True
       TabOrder = 0
     end
     object panControlsButtons: TPanel
       Left = 1
-      Height = 39
-      Top = 424
+      Height = 47
+      Top = 416
       Width = 232
       Align = alBottom
-      ClientHeight = 39
+      ClientHeight = 47
       ClientWidth = 232
       TabOrder = 1
       object btnFileUpdate: TButton
         Left = 8
         Height = 29
-        Top = 0
+        Top = 8
         Width = 62
         Action = actFileUpdate
         AutoSize = True
+        ParentShowHint = False
+        ShowHint = True
         TabOrder = 0
       end
     end
@@ -90,11 +93,13 @@ object frmMain: TfrmMain
         ClientHeight = 280
         inline synLog: TSynEdit
           Left = 2
-          Height = 276
+          Height = 278
           Top = 2
           Width = 703
           Align = alClient
-          BorderSpacing.Around = 2
+          BorderSpacing.Left = 2
+          BorderSpacing.Top = 2
+          BorderSpacing.Right = 2
           Font.Height = 13
           Font.Name = 'DejaVu Sans Mono'
           Font.Pitch = fpFixed
@@ -602,11 +607,13 @@ object frmMain: TfrmMain
         ClientHeight = 129
         object memError: TMemo
           Left = 2
-          Height = 125
-          Top = 2
+          Height = 127
+          Top = 0
           Width = 703
           Align = alClient
-          BorderSpacing.Around = 2
+          BorderSpacing.Left = 2
+          BorderSpacing.Right = 2
+          BorderSpacing.Bottom = 2
           ScrollBars = ssAutoVertical
           TabOrder = 0
         end
@@ -639,6 +646,8 @@ object frmMain: TfrmMain
         Action = actLoggingClearLogs
         Anchors = [akTop, akRight]
         AutoSize = True
+        ParentShowHint = False
+        ShowHint = True
         TabOrder = 2
       end
       object cbAutoClear: TCheckBox
@@ -657,6 +666,7 @@ object frmMain: TfrmMain
   object psMain: TJSONPropStorage
     StoredValues = <>
     Formatted = True
+    OnRestoreProperties = psMainRestoreProperties
     Left = 842
     Top = 112
   end
@@ -694,6 +704,7 @@ object frmMain: TfrmMain
     object actFileUpdate: TAction
       Category = 'File'
       Caption = '&Update'
+      Hint = 'Install/Update UberPDF SDK'
       OnExecute = actFileUpdateExecute
       ShortCut = 16469
     end
@@ -705,6 +716,7 @@ object frmMain: TfrmMain
     object actLoggingClearLogs: TAction
       Category = 'Logging'
       Caption = '&Clear Logs'
+      Hint = 'Clears all log panes'
       OnExecute = actLoggingClearLogsExecute
     end
     object actHelpAbout: TAction
