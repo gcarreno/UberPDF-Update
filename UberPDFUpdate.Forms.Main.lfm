@@ -1,0 +1,36 @@
+object frmMain: TfrmMain
+  Left = 267
+  Height = 464
+  Top = 250
+  Width = 943
+  Caption = 'ÜberPDF Update Utility'
+  Menu = mmMain
+  OnCreate = FormCreate
+  Position = poDefault
+  SessionProperties = 'Top;Left;Height;Width;WindowState'
+  object psMain: TJSONPropStorage
+    StoredValues = <>
+    Formatted = True
+    Left = 752
+    Top = 32
+  end
+  object mmMain: TMainMenu
+    Left = 670
+    Top = 32
+    object mnuFile: TMenuItem
+      Caption = '&File'
+      object mnuFileExit: TMenuItem
+        Action = actFileExit
+      end
+    end
+  end
+  object alMain: TActionList
+    Left = 670
+    Top = 98
+    object actFileExit: TFileExit
+      Category = 'File'
+      Caption = 'E&xit'
+      Hint = 'Exit'
+    end
+  end
+end
