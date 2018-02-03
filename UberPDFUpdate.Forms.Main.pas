@@ -70,6 +70,10 @@ var
 
 implementation
 
+uses
+  UberPDFUpdate.Manager,
+  UberPDFUpdate.Manager.Task;
+
 const
   cVersionMajor    = 0;
   cVersionMinor    = 1;
@@ -112,11 +116,33 @@ begin
 end;
 
 procedure TfrmMain.actFileUpdateExecute(Sender: TObject);
+var
+  s: String;
+  m: TInstallManager;
+  t: TInstallTaskGetLinuxDistribution;
 begin
   Log('Intsall Path: '+FInstallPath);
 {$IFDEF LINUX}
-  Log('HOME: '+GetEnvironmentVariable('HOME'));
-  Log('PATH: '+GetEnvironmentVariable('PATH'));
+  m := TInstallManager.Create;
+  Log(Format('HOME: %s', [m.EnvVars.Values['HOME']]));
+  Log(Format('PATH(%d): %s', [m.Path.Count, m.Path.DelimitedText]));
+  for s in m.Path do
+  begin
+    Log(Format(#9'%s', [s]));
+  end;
+  t := TInstallTaskGetLinuxDistribution.Create(m);
+  Log('Executing');
+  t.Exec;
+  if t.Result.Success then
+  begin
+    Log('Success');
+    Log(t.Result.Output);
+  end
+  else
+  begin
+    Log('No Success');
+    Log(Format('Return: %d',[t.Result.Return]));
+  end;
 {$ENDIF}
 {$IFDEF WINDOWS}
   Log('HOMEPATH: '+GetEnvironmentVariable('HOMEPATH'));
