@@ -6,11 +6,34 @@ interface
 
 uses
   Classes, SysUtils,
-  UberPDFUpdate.Manager.Tasks;
+  UberPDFUpdate.Manager.Tasks,
+  UberPDFUpdate.Manager.Task;
 
 type
 {
+  TInstallOSType
+}
+  TInstallOSType = (iotWindows, iotLinux, iotBSD, iotDarwin);
+{
+  TInstallOSArchitectureType
+}
+  TInstallOSArchitectureType = (ioat32, ioat64);
+{
+  TInstallOS
+  Contains the OS information
+}
+  TInstallOS = record
+{$IFDEF LINUX}
+    Distribution: String;
+{$ENDIF}
+    OS: TInstallOSType;
+    Architecture: TInstallOSArchitectureType;
+    Version: String;
+  end;
+
+{
   TInstallManager
+  Manages the OS, Environment and Install Tasks
 }
   TInstallManager = class(TObject)
   private
@@ -18,6 +41,7 @@ type
     FVerbose: Boolean;
 
     FInstallPath: String;
+    FCurrentOS: TInstallOS;
     FEnvVars: TStringList;
     FPath: TStringList;
   protected
@@ -25,10 +49,13 @@ type
     constructor Create(const AInstallPath: String);
     destructor Destroy; override;
 
-    property InstallPath: String
-      read FInstallPath;
     property Verbose: Boolean
       read FVerbose;
+
+    property InstallPath: String
+      read FInstallPath;
+    property CurrentOS: TInstallOS
+      read FCurrentOS;
     property EnvVars: TStringList
       read FEnvVars;
     property Path: TStringList
@@ -42,9 +69,26 @@ implementation
 constructor TInstallManager.Create(const AInstallPath: String);
 var
   index: Integer;
+  s: String;
+  t: TInstallTaskGetLinuxDistribution;
 begin
   FTasks := TInstallTasks.Create;
   FVerbose := False;
+
+{$IFDEF LINUX}
+  t := TInstallTaskGetLinuxDistribution.Create(Self);
+  t.Exec;
+  if t.Result.Success then
+  begin
+    if Pos('ubuntu', LowerCase(t.Result.Output)) > 0 then
+    begin
+      FCurrentOS.Distribution:='ubuntu';
+      FCurrentOS.OS := iotLinux;
+      // TODO: Get version
+    end;
+  end;
+  t.Free;
+{$ENDIF}
   FInstallPath := AInstallPath;
   FEnvVars := TStringList.Create;
   FPath := TStringList.Create;

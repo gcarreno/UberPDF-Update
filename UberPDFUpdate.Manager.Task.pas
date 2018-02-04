@@ -42,7 +42,6 @@ type
   private
     FProcess: TProcess;
 
-    function ReadOutput: Boolean;
   protected
   public
     procedure Exec;
@@ -72,26 +71,6 @@ end;
 
 { TInstallTaskGetLinuxDistribution }
 
-function TInstallTaskGetLinuxDistribution.ReadOutput: Boolean;
-const
-  BufSize = 4096;
-var
-  Buffer: array[0..BufSize - 1] of byte;
-  ReadBytes: integer;
-  c: byte;
-begin
-  Result := False;
-  while FProcess.Output.NumBytesAvailable > 0 do
-  begin
-    ReadBytes := FProcess.Output.Read({%H-}Buffer, BufSize);
-    for c in Buffer do
-    begin
-      FResult.Output := FResult.Output + Char(c);
-    end;
-    Result := True;
-  end;
-end;
-
 procedure TInstallTaskGetLinuxDistribution.Exec;
 var
   Release: TStringList;
@@ -108,8 +87,8 @@ begin
         FResult.Success := True;
         FResult.Return := 0;
         FResult.Output := Format('%s %s', [
-          Release.Values['NAME'],
-          Release.Values['VERSION_ID']]);
+          StringReplace(Release.Values['NAME'], '"', '', [rfReplaceAll]),
+          StringReplace(Release.Values['VERSION_ID'], '"', '', [rfReplaceAll])]);
         exit;
       finally
         Release.Free;
@@ -124,9 +103,9 @@ begin
         Release.LoadFromFile(FileName);
         FResult.Success := True;
         FResult.Return := 0;
-        FResult.Output := Format('%s %s', [
-          Release.Values['NAME'],
-          Release.Values['VERSION_ID']]);
+        FResult.Output := Format('%s:%s', [
+        StringReplace(Release.Values['NAME'], '"', '', [rfReplaceAll]),
+        StringReplace(Release.Values['VERSION_ID'], '"', '', [rfReplaceAll])]);
         exit;
       finally
         Release.Free;

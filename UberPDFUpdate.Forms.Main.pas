@@ -119,31 +119,17 @@ procedure TfrmMain.actFileUpdateExecute(Sender: TObject);
 var
   s: String;
   m: TInstallManager;
-  t: TInstallTaskGetLinuxDistribution;
 begin
   Log('Intsall Path: '+FInstallPath);
   m := TInstallManager.Create(FInstallPath);
 {$IFDEF LINUX}
+  Log(Format('Dist: %s', [m.CurrentOS.Distribution]));
   Log(Format('HOME: %s', [m.EnvVars.Values['HOME']]));
   Log(Format('PATH(%d): %s', [m.Path.Count, m.Path.DelimitedText]));
   for s in m.Path do
   begin
     Log(Format(#9'%s', [s]));
   end;
-  t := TInstallTaskGetLinuxDistribution.Create(m);
-  Log('Executing');
-  t.Exec;
-  if t.Result.Success then
-  begin
-    Log('Success');
-    Log(t.Result.Output);
-  end
-  else
-  begin
-    Log('No Success');
-    Log(Format('Return: %d',[t.Result.Return]));
-  end;
-  t.Free;
 {$ENDIF}
 {$IFDEF WINDOWS}
   Log(Format('HOMEPATH: %s', [m.EnvVars.Values['HOMEPATH']]));
