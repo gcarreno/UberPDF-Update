@@ -28,6 +28,7 @@ type
     FResult: TInstallTaskResult;
   public
     constructor Create(const AManager: TObject);
+    destructor Destroy; override;
 
     property Result: TInstallTaskResult
       read FResult;
@@ -61,6 +62,12 @@ begin
   FResult.Success := False;
   FResult.Return := -1;
   FResult.Output := EmptyStr;
+end;
+
+destructor TInstallTask.Destroy;
+begin
+  FManager := nil;
+  inherited Destroy;
 end;
 
 { TInstallTaskGetLinuxDistribution }

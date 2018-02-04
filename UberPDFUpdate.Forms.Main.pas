@@ -122,8 +122,8 @@ var
   t: TInstallTaskGetLinuxDistribution;
 begin
   Log('Intsall Path: '+FInstallPath);
+  m := TInstallManager.Create(FInstallPath);
 {$IFDEF LINUX}
-  m := TInstallManager.Create;
   Log(Format('HOME: %s', [m.EnvVars.Values['HOME']]));
   Log(Format('PATH(%d): %s', [m.Path.Count, m.Path.DelimitedText]));
   for s in m.Path do
@@ -143,11 +143,17 @@ begin
     Log('No Success');
     Log(Format('Return: %d',[t.Result.Return]));
   end;
+  t.Free;
 {$ENDIF}
 {$IFDEF WINDOWS}
-  Log('HOMEPATH: '+GetEnvironmentVariable('HOMEPATH'));
-  Log('PATH: '+GetEnvironmentVariable('PATH'));
+  Log(Format('HOMEPATH: %s', [m.EnvVars.Values['HOMEPATH']]));
+  Log(Format('PATH(%d): %s', [m.Path.Count, m.Path.DelimitedText]));
+  for s in m.Path do
+  begin
+    Log(Format(#9'%s', [s]));
+  end;
 {$ENDIF}
+  m.Free;
 end;
 
 procedure TfrmMain.actHelpAboutExecute(Sender: TObject);

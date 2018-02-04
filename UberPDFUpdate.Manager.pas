@@ -17,13 +17,16 @@ type
     FTasks: TInstallTasks;
     FVerbose: Boolean;
 
+    FInstallPath: String;
     FEnvVars: TStringList;
     FPath: TStringList;
   protected
   public
-    constructor Create;
+    constructor Create(const AInstallPath: String);
     destructor Destroy; override;
 
+    property InstallPath: String
+      read FInstallPath;
     property Verbose: Boolean
       read FVerbose;
     property EnvVars: TStringList
@@ -36,12 +39,13 @@ implementation
 
 { TInstallManager }
 
-constructor TInstallManager.Create;
+constructor TInstallManager.Create(const AInstallPath: String);
 var
   index: Integer;
 begin
   FTasks := TInstallTasks.Create;
   FVerbose := False;
+  FInstallPath := AInstallPath;
   FEnvVars := TStringList.Create;
   FPath := TStringList.Create;
   for index := 0 to GetEnvironmentVariableCount - 1 do
