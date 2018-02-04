@@ -84,10 +84,26 @@ begin
     begin
       FCurrentOS.Distribution:='ubuntu';
       FCurrentOS.OS := iotLinux;
-      // TODO: Get version
+      // TODO: Get Distribution Version
+      // TODO: Get Architecture
     end;
   end;
   t.Free;
+{$ENDIF}
+{$IFDEF WINDOWS}
+  FCurrentOS.OS := iotWindows;
+  // TODO: Get Windows Version
+  // TODO: Get Architecture
+{$ENDIF}
+{$IFDEF BSD}
+  FCurrentOS.OS := iotBSD;
+  // TODO: Get BSD Version
+  // TODO: Get Architecture
+{$ENDIF}
+{$IFDEF DARWIN}
+  FCurrentOS.OS := iotDarwin;
+  // TODO: Get MacOS Version
+  // TODO: Get Architecture
 {$ENDIF}
   FInstallPath := AInstallPath;
   FEnvVars := TStringList.Create;
