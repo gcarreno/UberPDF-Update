@@ -78,7 +78,7 @@ const
   cVersionMajor    = 0;
   cVersionMinor    = 1;
   cVersionRevision = 0;
-  cVersionBuild    = 12;
+  cVersionBuild    = 17;
 
 {$R *.lfm}
 
